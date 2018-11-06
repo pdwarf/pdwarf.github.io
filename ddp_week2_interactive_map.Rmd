@@ -1,0 +1,41 @@
+---
+title: "250 Starbucks Locations across the World"
+author: "pdwarf"
+date: "11/6/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+The data for this map can be found at: https://opendata.socrata.com/Business/All-Starbucks-Locations-in-the-World/xy4y-c4mk
+
+This file was created Nov 06, 2018.
+
+```{r message=FALSE}
+#Getting the data via API
+library(leaflet)
+library(httr)
+library(jsonlite)
+
+starbucksDataURL <- "https://opendata.socrata.com/resource/xy4y-c4mk.json"
+
+request <- GET(starbucksDataURL)
+stop_for_status(request)
+rawStarbucksData <- fromJSON(toJSON(content(request)))
+
+starbucksLocations <- data.frame(name = as.character(rawStarbucksData$name), lat = as.numeric(rawStarbucksData$latitude), lng = as.numeric(rawStarbucksData$longitude))
+
+starbucksIcon <- makeIcon(
+    iconUrl = "http://www.stickpng.com/assets/images/58428cc1a6515b1e0ad75ab1.png",
+    iconHeight = 31,
+    iconWidth = 31
+)
+
+#Creating a map with Leaflet
+starbucksLocations %>% 
+    leaflet() %>%
+    addTiles() %>%
+    addMarkers(popup = starbucksLocations$name, icon = starbucksIcon)
+```
+
