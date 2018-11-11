@@ -1,0 +1,63 @@
+---
+title: "The Price of a Big Mac Through Time & Space"
+author: "pdwarf"
+date: "11/10/2018"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Big Mac Index Data
+
+The following graphic uses data published by The Economist on github which is the 
+basis for the famously known *Big Mac Index*:  https://github.com/TheEconomist/big-mac-data
+
+My graph will show the price (in USD) of a Big Mac in 7 countries or areas around the world, from 2001 to 2018:
+
+- USA
+- China
+- Russia
+- Great Britain
+- India
+- Euro Zone
+- Norway (because here, the Big Mac was always most expensive, until recently)
+
+## Slide with R Output
+
+```{r, echo = TRUE, message=FALSE, eval=FALSE}
+library(tidyverse)
+library(plotly)
+
+URL <-
+    "https://raw.githubusercontent.com/TheEconomist/big-mac-data/master/output-data/big-mac-full-index.csv"
+
+BigMacIndex <- 
+    read_csv(URL)
+
+BigMacIndex %>%
+    filter(iso_a3 %in% 
+               c("NOR", "GBR", "CHN", "RUS",
+                 "USA", "EUZ", "IND")) %>%
+    plot_ly(x = ~date) %>%
+    add_lines(y = ~dollar_price, 
+              color = ~ factor(iso_a3))
+```
+
+## Slide with Plot
+
+```{r, echo = FALSE, message=FALSE, eval=TRUE}
+library(tidyverse)
+library(plotly)
+
+BigMacIndex <- 
+    read_csv("https://raw.githubusercontent.com/TheEconomist/big-mac-data/master/output-data/big-mac-full-index.csv")
+
+BigMacIndex %>%
+    filter(iso_a3 %in% c("NOR", "GBR", "CHN", "RUS",
+                         "USA", "EUZ", "IND")) %>%
+    plot_ly(x = ~date) %>%
+    add_lines(y = ~dollar_price, color = ~ factor(iso_a3))
+```
+
